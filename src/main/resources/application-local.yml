@@ -1,0 +1,198 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /framework/oauth/authorization/api
+
+spring:
+  security:
+    user:
+      password: ${random.uuid}
+  config:
+    activate:
+      on-profile: local
+  output:
+    ansi:
+      enabled: always
+  sleuth:
+    sampler:
+      probability: 1.0
+  zipkin:
+    base-url: http://zipkin.sprouts.kr/
+  cloud:
+    discovery:
+      enabled: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        trace: false
+        web-allow-others: false
+  datasource:
+    url: jdbc:h2:mem:sprouts_framework_oauth_authorization
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+    open-in-view: false
+    generate-ddl: true
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      org:
+        hibernate:
+          envers:
+            audit_table_suffix: _audit
+            store_data_at_delete: true
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+        legacy_limit_handler: true
+        jdbc:
+          time_zone: Asia/Seoul
+
+eureka:
+  instance:
+     instance-id: ${random.uuid}
+     prefer-ip-address: true
+     lease-renewal-interval-in-seconds: 3
+     lease-expiration-duration-in-seconds: 10
+  client:
+    client:
+      enabled: true
+    healthcheck:
+      enabled: true
+    register-with-eureka: true
+    fetch-registry: true
+    registry-fetch-interval-seconds: 10
+    disable-delta: false
+    service-url:
+      defaultZone: http://discovery.framework.sprouts.kr/eureka/
+
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: "*"
+  endpoint:
+    prometheus:
+      enable: true
+    refresh:
+      enabled: true
+    shutdown:
+      enabled: true
+    health:
+      show-details: always
+    gateway:
+      enabled: true
+  info:
+    java:
+      enabled: true
+
+logbook:
+  include:
+    - ${server.servlet.context-path}/**
+  exclude:
+    - ${server.servlet.context-path}/actuator/**
+    - ${server.servlet.context-path}/h2-console/**
+  filter.enabled: true
+  secure-filter.enabled: true
+  format.style: json
+  strategy: default
+  minimum-status: 400
+  obfuscate:
+    headers:
+      - Authorization
+    parameters:
+      - access_token
+  write:
+    chunk-size: 4000
+
+logging.level:
+  root: WARN
+  org.zalando.logbook: TRACE
+  kr.sprouts: DEBUG
+
+sprouts:
+  logstash-appender:
+    name: LOGSTASH
+    identifier: ${spring.application.name}-${spring.profiles.active}
+    destinations:
+      - host: 127.0.0.1
+        port: 5045
+  web:
+    response:
+      default-host: gateway
+      hosts:
+        - name: gateway
+          url: http://127.0.0.1:8080${server.servlet.context-path}
+  security:
+    http:
+      permit-all.patterns:
+        - /actuator/**
+        - /h2-console/**
+    credential:
+      header:
+        provider-header-name: "Authorization-Provider"
+        consumer-header-name: "Authorization-Consumer"
+        value-header-name: "Authorization"
+      providers:
+        - id: "98c73526-7b15-4e0c-aacd-a47816efaedc"
+          name: "Provider #1"
+          type: "API_KEY"
+          algorithm: "AES128"
+          codec: "BASE64_URL"
+          encodedSecret: "ptRxQCz0a-Ug9Fiu_A2-0A=="
+          targetConsumers:
+            - id: "bcb7f865-319b-4668-9fca-4ea4440822e2"
+              name: "Consumer #1"
+        - id: "fc3ddab7-3942-4cc5-aaaa-b41772c6ebac"
+          name: "Provider #2"
+          type: "API_KEY"
+          algorithm: "AES256"
+          codec: "BASE64_URL"
+          encodedSecret: "VhIW0Qwfqwm9KGVk6dBfyD0iBlfJSOzCofPdoxUqABg="
+          targetConsumers:
+            - id: "70ed75d8-bfdc-4227-904f-a9d17bb9472f"
+              name: "Consumer #2"
+        - id: "1ebf4960-f935-493c-8beb-1f26376bff54"
+          name: "Provider #3"
+          type: "BEARER_TOKEN"
+          algorithm: "HS256"
+          codec: "BASE64_URL"
+          encodedSecret: "9rBJxUbKuODsQmu1b5oUw5dxc8YcgGh5RnqdLV3nsRwm21UJVrrziYq1a6MM5JLm"
+          targetConsumers:
+            - id: "013a7e72-9bb4-42c6-a908-514375b4318d"
+              name: "Consumer #3"
+      consumers:
+        - id: "bcb7f865-319b-4668-9fca-4ea4440822e2"
+          name: "Consumer #1"
+          type: "API_KEY"
+          algorithm: "AES128"
+          codec: "BASE64_URL"
+          encodedSecret: "ptRxQCz0a-Ug9Fiu_A2-0A=="
+          validProviders:
+            - id: "98c73526-7b15-4e0c-aacd-a47816efaedc"
+              name: "Provider #1"
+        - id: "70ed75d8-bfdc-4227-904f-a9d17bb9472f"
+          name: "Consumer #2"
+          type: "API_KEY"
+          algorithm: "AES256"
+          codec: "BASE64_URL"
+          encodedSecret: "VhIW0Qwfqwm9KGVk6dBfyD0iBlfJSOzCofPdoxUqABg="
+          validProviders:
+            - id: "fc3ddab7-3942-4cc5-aaaa-b41772c6ebac"
+              name: "Provider #2"
+        - id: "013a7e72-9bb4-42c6-a908-514375b4318d"
+          name: "Consumer #3"
+          type: "BEARER_TOKEN"
+          algorithm: "HS256"
+          codec: "BASE64_URL"
+          encodedSecret: "9rBJxUbKuODsQmu1b5oUw5dxc8YcgGh5RnqdLV3nsRwm21UJVrrziYq1a6MM5JLm"
+          validProviders:
+            - id: "1ebf4960-f935-493c-8beb-1f26376bff54"
+              name: "Provider #3"

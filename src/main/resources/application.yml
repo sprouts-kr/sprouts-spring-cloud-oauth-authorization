@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: sprouts-spring-cloud-oauth-authorization
+  profiles:
+    active: local
+  cloud:
+    config:
+      enabled: false
