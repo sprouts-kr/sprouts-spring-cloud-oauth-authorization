@@ -17,7 +17,7 @@
         <!-- dependency -->
         <querydsl.version>5.0.0</querydsl.version>
         <logbook.version>2.16.0</logbook.version>
-        <sprouts.logstash.appender.version>0.0.3</sprouts.logstash.appender.version>
+        <sprouts.logstash.appender.version>0.0.4</sprouts.logstash.appender.version>
         <sprouts.web.api.response.version>0.0.3</sprouts.web.api.response.version>
         <sprouts.security.credential.provider.version>0.0.2</sprouts.security.credential.provider.version>
         <sprouts.security.credential.consumer.version>0.0.2</sprouts.security.credential.consumer.version>
@@ -126,10 +126,9 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- sprouts.kr -->
         <!-- logstash appender -->
         <dependency>
-            <groupId>kr.sprouts.autoconfigure</groupId>
+            <groupId>kr.sprouts.framework.autoconfigure</groupId>
             <artifactId>sprouts-logstash-appender-spring-boot-starter</artifactId>
             <version>${sprouts.logstash.appender.version}</version>
         </dependency>
