@@ -29,7 +29,7 @@
     <repositories>
         <!-- personal repository -->
         <repository>
-            <id>nexus3-maven-public</id>
+            <id>personal-public</id>
             <url>https://nexus.sprouts.kr/repository/maven/</url>
         </repository>
     </repositories>
