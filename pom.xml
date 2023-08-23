@@ -18,7 +18,7 @@
         <querydsl.version>5.0.0</querydsl.version>
         <logbook.version>2.16.0</logbook.version>
         <sprouts.logstash.appender.version>0.0.4</sprouts.logstash.appender.version>
-        <sprouts.web.api.response.version>0.0.3</sprouts.web.api.response.version>
+        <sprouts.web.response.version>0.0.4</sprouts.web.response.version>
         <sprouts.security.credential.provider.version>0.0.2</sprouts.security.credential.provider.version>
         <sprouts.security.credential.consumer.version>0.0.2</sprouts.security.credential.consumer.version>
         <!-- plugin -->
@@ -132,11 +132,11 @@
             <artifactId>sprouts-logstash-appender-spring-boot-starter</artifactId>
             <version>${sprouts.logstash.appender.version}</version>
         </dependency>
-        <!-- web api response -->
+        <!-- web response -->
         <dependency>
-            <groupId>kr.sprouts.autoconfigure</groupId>
-            <artifactId>sprouts-web-api-response-spring-boot-starter</artifactId>
-            <version>${sprouts.web.api.response.version}</version>
+            <groupId>kr.sprouts.framework.autoconfigure</groupId>
+            <artifactId>sprouts-web-response-spring-boot-starter</artifactId>
+            <version>${sprouts.web.response.version}</version>
         </dependency>
         <!-- credential provider -->
         <dependency>
