@@ -1,4 +1,4 @@
-package kr.sprouts.framework.oauth.authorization.components.aop;
+package kr.sprouts.framework.service.oauth.authorization.components.aop;
 
 import kr.sprouts.framework.autoconfigure.web.response.components.base.BaseException;
 import kr.sprouts.framework.autoconfigure.web.response.components.exception.UnhandledException;

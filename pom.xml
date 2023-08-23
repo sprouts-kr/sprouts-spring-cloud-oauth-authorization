@@ -8,7 +8,7 @@
         <version>2.7.14</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>kr.sprouts.framework</groupId>
+    <groupId>kr.sprouts.framework.service</groupId>
     <artifactId>sprouts-spring-cloud-oauth-authorization</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>sprouts-spring-cloud-oauth-authorization</name>

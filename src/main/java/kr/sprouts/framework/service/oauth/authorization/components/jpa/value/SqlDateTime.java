@@ -1,4 +1,4 @@
-package kr.sprouts.framework.oauth.authorization.components.jpa.value;
+package kr.sprouts.framework.service.oauth.authorization.components.jpa.value;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
