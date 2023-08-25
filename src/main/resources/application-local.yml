@@ -20,7 +20,7 @@ spring:
     base-url: http://zipkin.sprouts.kr/
   cloud:
     discovery:
-      enabled: true
+      enabled: false
   h2:
     console:
       enabled: true
@@ -62,7 +62,7 @@ eureka:
      lease-expiration-duration-in-seconds: 10
   client:
     client:
-      enabled: true
+      enabled: false
     healthcheck:
       enabled: true
     register-with-eureka: true
