@@ -135,8 +135,6 @@ sprouts:
       permit-all.patterns:
         - /actuator/**
         - /h2-console/**
-      permit-get.patterns:
-        - /**
       permit-post.patterns:
         - /authorize/providers/**/credential
     credential:
