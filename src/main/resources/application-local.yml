@@ -135,11 +135,15 @@ sprouts:
       permit-all.patterns:
         - /actuator/**
         - /h2-console/**
+      permit-get.patterns:
+        - /**
+      permit-post.patterns:
+        - /authorize/providers/**/credential
     credential:
       header:
-        name: "Authorization-Provider"
-        prefix: "Authorization-Consumer"
-        codec: "Authorization"
+        name: "Authorization"
+        prefix: "Bearer"
+        codec: "BASE64_URL"
       providers:
         - id: "98c73526-7b15-4e0c-aacd-a47816efaedc"
           name: "Provider #1"
