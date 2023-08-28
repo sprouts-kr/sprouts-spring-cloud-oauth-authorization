@@ -1,6 +1,6 @@
 package kr.sprouts.framework.service.oauth.authorization.components.jpa.component;
 
-import kr.sprouts.framework.service.oauth.authorization.components.utility.PatternMatcher;
+import kr.sprouts.framework.service.oauth.authorization.components.regex.PatternMatcher;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
