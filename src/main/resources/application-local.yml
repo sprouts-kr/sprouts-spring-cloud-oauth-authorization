@@ -20,7 +20,7 @@ spring:
     base-url: http://zipkin.sprouts.kr/
   cloud:
     discovery:
-      enabled: true
+      enabled: false
   h2:
     console:
       enabled: true
@@ -62,7 +62,7 @@ eureka:
      lease-expiration-duration-in-seconds: 10
   client:
     client:
-      enabled: true
+      enabled: false
     healthcheck:
       enabled: true
     register-with-eureka: true
@@ -117,6 +117,15 @@ logging.level:
   org.zalando.logbook: TRACE
   kr.sprouts: DEBUG
 
+remote:
+  resource:
+    host: http://gateway.framework.sprouts.kr
+    contextPath: /framework/oauth/resource/api
+    authorization:
+      header: Authorization
+      prefix: Bearer
+      value: rO0ABXNyADtrci5zcHJvdXRzLmZyYW1ld29yay5saWJyYXJ5LnNlY3VyaXR5LmNyZWRlbnRpYWwuQ3JlZGVudGlhbJOquvmv76gkAgADTAALY29uc3VtZXJJZHN0ABBMamF2YS91dGlsL0xpc3Q7TAAKcHJvdmlkZXJJZHQAEExqYXZhL3V0aWwvVVVJRDtMAAV2YWx1ZXQAEkxqYXZhL2xhbmcvU3RyaW5nO3hwc3IAE2phdmEudXRpbC5BcnJheUxpc3R4gdIdmcdhnQMAAUkABHNpemV4cAAAAAF3BAAAAAFzcgAOamF2YS51dGlsLlVVSUS8mQP3mG2FLwIAAkoADGxlYXN0U2lnQml0c0oAC21vc3RTaWdCaXRzeHChTQ_kWBO3xf___zhQUkM6eHNxAH4AB7OGiudIsOOU____MkhYQ8h0AQBhUXhxR0FmRTdmN203bGtxVmRTejd6VzlmNDQwS1RXM2hxSDJhRmxRemRkb2xkVDUzSHZvRm1jYXBNb0ZGN0FmbGZ0amV1Mk9uZ0dzcFc2TGl6YzFVZ1hBbXRsQ0ZrLUNHTktHTTBRUWZlNWd3V0Y5YlVrSXVTOW1lMXpLVFBrMUtTc2JCOEdQcGRhMThFWVBCRHNZTDhkSGJncmR6VUhhakFnS1liNG1VWnhTYWhWOXFJV3dRVnB1ZXRRQVhMS3pleEdqcGRibDFndEJ2MXYtbHpKSjU2M1JpTzhES2NzMzk0cmc1TjN2V2dLNThhOUl1UFdVTVFtcFBhTFVZX3p5
+
 sprouts:
   logstash-appender:
     name: LOGSTASH
@@ -135,64 +144,48 @@ sprouts:
       permit-all.patterns:
         - /actuator/**
         - /h2-console/**
+      permit-post.patterns:
+        - /authorize/providers/**/credential
     credential:
       header:
-        provider-header-name: "Authorization-Provider"
-        consumer-header-name: "Authorization-Consumer"
-        value-header-name: "Authorization"
+        name: "Authorization"
+        prefix: "Bearer"
+        codec: "BASE64_URL"
       providers:
-        - id: "98c73526-7b15-4e0c-aacd-a47816efaedc"
-          name: "Provider #1"
-          type: "API_KEY"
-          algorithm: "AES128"
-          codec: "BASE64_URL"
-          encodedSecret: "ptRxQCz0a-Ug9Fiu_A2-0A=="
-          targetConsumers:
-            - id: "bcb7f865-319b-4668-9fca-4ea4440822e2"
-              name: "Consumer #1"
-        - id: "fc3ddab7-3942-4cc5-aaaa-b41772c6ebac"
-          name: "Provider #2"
-          type: "API_KEY"
-          algorithm: "AES256"
-          codec: "BASE64_URL"
-          encodedSecret: "VhIW0Qwfqwm9KGVk6dBfyD0iBlfJSOzCofPdoxUqABg="
-          targetConsumers:
-            - id: "70ed75d8-bfdc-4227-904f-a9d17bb9472f"
-              name: "Consumer #2"
-        - id: "1ebf4960-f935-493c-8beb-1f26376bff54"
-          name: "Provider #3"
+        - id: "00000033-6ff9-4630-bd13-82f27a962fd3"
+          name: "Default provider"
           type: "BEARER_TOKEN"
           algorithm: "HS256"
           codec: "BASE64_URL"
           encodedSecret: "9rBJxUbKuODsQmu1b5oUw5dxc8YcgGh5RnqdLV3nsRwm21UJVrrziYq1a6MM5JLm"
           targetConsumers:
-            - id: "013a7e72-9bb4-42c6-a908-514375b4318d"
-              name: "Consumer #3"
+            - id: "00000071-480b-4617-9de2-da82b0d4a20e"
+              name: "Default consumer"
+        - id: "ffffff32-4858-43c8-b386-8ae748b0e394"
+          name: "ApiKey provider"
+          type: "API_KEY"
+          algorithm: "AES256"
+          codec: "BASE64_URL"
+          encodedSecret: "VhIW0Qwfqwm9KGVk6dBfyD0iBlfJSOzCofPdoxUqABg="
+          targetConsumers:
+            - id: "ffffff38-5052-433a-a14d-0fe45813b7c5"
+              name: "ApiKey consumer"
       consumers:
-        - id: "bcb7f865-319b-4668-9fca-4ea4440822e2"
-          name: "Consumer #1"
-          type: "API_KEY"
-          algorithm: "AES128"
-          codec: "BASE64_URL"
-          encodedSecret: "ptRxQCz0a-Ug9Fiu_A2-0A=="
-          validProviders:
-            - id: "98c73526-7b15-4e0c-aacd-a47816efaedc"
-              name: "Provider #1"
-        - id: "70ed75d8-bfdc-4227-904f-a9d17bb9472f"
-          name: "Consumer #2"
-          type: "API_KEY"
-          algorithm: "AES256"
-          codec: "BASE64_URL"
-          encodedSecret: "VhIW0Qwfqwm9KGVk6dBfyD0iBlfJSOzCofPdoxUqABg="
-          validProviders:
-            - id: "fc3ddab7-3942-4cc5-aaaa-b41772c6ebac"
-              name: "Provider #2"
-        - id: "013a7e72-9bb4-42c6-a908-514375b4318d"
-          name: "Consumer #3"
+        - id: "00000071-480b-4617-9de2-da82b0d4a20e"
+          name: "Default consumer"
           type: "BEARER_TOKEN"
           algorithm: "HS256"
           codec: "BASE64_URL"
           encodedSecret: "9rBJxUbKuODsQmu1b5oUw5dxc8YcgGh5RnqdLV3nsRwm21UJVrrziYq1a6MM5JLm"
           validProviders:
-            - id: "1ebf4960-f935-493c-8beb-1f26376bff54"
-              name: "Provider #3"
+            - id: "00000033-6ff9-4630-bd13-82f27a962fd3"
+              name: "Default provider"
+        - id: "ffffff38-5052-433a-a14d-0fe45813b7c5"
+          name: "ApiKey consumer"
+          type: "API_KEY"
+          algorithm: "AES256"
+          codec: "BASE64_URL"
+          encodedSecret: "VhIW0Qwfqwm9KGVk6dBfyD0iBlfJSOzCofPdoxUqABg="
+          validProviders:
+            - id: "ffffff32-4858-43c8-b386-8ae748b0e394"
+              name: "ApiKey provider"

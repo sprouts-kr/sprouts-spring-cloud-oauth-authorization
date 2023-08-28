@@ -1,4 +1,4 @@
-package kr.sprouts.framework.oauth.authorization.components.querydsl;
+package kr.sprouts.framework.service.oauth.authorization.components.querydsl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.context.annotation.Bean;

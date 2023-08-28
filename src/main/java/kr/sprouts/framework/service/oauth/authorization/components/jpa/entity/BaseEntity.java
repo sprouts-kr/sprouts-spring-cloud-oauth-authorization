@@ -1,6 +1,6 @@
-package kr.sprouts.framework.oauth.authorization.components.jpa.entity;
+package kr.sprouts.framework.service.oauth.authorization.components.jpa.entity;
 
-import kr.sprouts.framework.oauth.authorization.components.jpa.value.SqlDateTime;
+import kr.sprouts.framework.service.oauth.authorization.components.jpa.value.SqlDateTime;
 import lombok.Getter;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedBy;

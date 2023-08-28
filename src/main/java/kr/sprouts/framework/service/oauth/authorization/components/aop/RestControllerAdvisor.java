@@ -1,8 +1,8 @@
-package kr.sprouts.framework.oauth.authorization.components.aop;
+package kr.sprouts.framework.service.oauth.authorization.components.aop;
 
-import kr.sprouts.autoconfigure.response.base.BaseException;
-import kr.sprouts.autoconfigure.response.entity.StructuredResponse;
-import kr.sprouts.autoconfigure.response.entity.StructuredResponseEntity;
+import kr.sprouts.framework.autoconfigure.web.response.components.base.BaseException;
+import kr.sprouts.framework.autoconfigure.web.response.components.entity.StructuredResponse;
+import kr.sprouts.framework.autoconfigure.web.response.components.entity.StructuredResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 

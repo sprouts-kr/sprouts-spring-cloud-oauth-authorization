@@ -25,7 +25,7 @@
         </mirror>
         <!-- personal repository -->
         <mirror>
-            <id>nexus3-maven-public</id>
+            <id>personal-public</id>
             <mirrorOf>central</mirrorOf>
             <url>https://nexus.sprouts.kr/repository/maven/</url>
             <blocked>false</blocked>

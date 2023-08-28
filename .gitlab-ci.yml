@@ -4,8 +4,8 @@ variables:
   DOCKER_IN_DOCKER_IMAGE: registry.nexus.sprouts.kr/docker:20.10.18-dind
 
 include:
-  - project: "sprouts/library/gitlab-ci"
-    ref: 0.0.2
+  - project: "gitlab-library/gitlab-ci"
+    ref: 0.0.4
     file:
       - 'template/maven-service-with-version/prepare.gitlab-ci.yml'
       - 'template/maven-service-with-version/build.maven.gitlab-ci.yml'

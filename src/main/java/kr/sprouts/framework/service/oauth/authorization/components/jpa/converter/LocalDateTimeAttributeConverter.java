@@ -1,4 +1,4 @@
-package kr.sprouts.framework.oauth.authorization.components.jpa.converter;
+package kr.sprouts.framework.service.oauth.authorization.components.jpa.converter;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
