@@ -117,6 +117,15 @@ logging.level:
   org.zalando.logbook: TRACE
   kr.sprouts: DEBUG
 
+remote:
+  resource:
+    host: http://gateway.framework.sprouts.kr
+    contextPath: /framework/oauth/resource/api
+    authorization:
+      header: Authorization
+      prefix: Bearer
+      value: rO0ABXNyADtrci5zcHJvdXRzLmZyYW1ld29yay5saWJyYXJ5LnNlY3VyaXR5LmNyZWRlbnRpYWwuQ3JlZGVudGlhbJOquvmv76gkAgADTAALY29uc3VtZXJJZHN0ABBMamF2YS91dGlsL0xpc3Q7TAAKcHJvdmlkZXJJZHQAEExqYXZhL3V0aWwvVVVJRDtMAAV2YWx1ZXQAEkxqYXZhL2xhbmcvU3RyaW5nO3hwc3IAE2phdmEudXRpbC5BcnJheUxpc3R4gdIdmcdhnQMAAUkABHNpemV4cAAAAAF3BAAAAAFzcgAOamF2YS51dGlsLlVVSUS8mQP3mG2FLwIAAkoADGxlYXN0U2lnQml0c0oAC21vc3RTaWdCaXRzeHChTQ_kWBO3xf___zhQUkM6eHNxAH4AB7OGiudIsOOU____MkhYQ8h0AQBhUXhxR0FmRTdmN203bGtxVmRTejd6VzlmNDQwS1RXM2hxSDJhRmxRemRkb2xkVDUzSHZvRm1jYXBNb0ZGN0FmbGZ0amV1Mk9uZ0dzcFc2TGl6YzFVZ1hBbXRsQ0ZrLUNHTktHTTBRUWZlNWd3V0Y5YlVrSXVTOW1lMXpLVFBrMUtTc2JCOEdQcGRhMThFWVBCRHNZTDhkSGJncmR6VUhhakFnS1liNG1VWnhTYWhWOXFJV3dRVnB1ZXRRQVhMS3pleEdqcGRibDFndEJ2MXYtbHpKSjU2M1JpTzhES2NzMzk0cmc1TjN2V2dLNThhOUl1UFdVTVFtcFBhTFVZX3p5
+
 sprouts:
   logstash-appender:
     name: LOGSTASH
