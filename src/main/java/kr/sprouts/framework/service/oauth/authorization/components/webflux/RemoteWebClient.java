@@ -16,6 +16,10 @@ import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
 public class RemoteWebClient {
+    private RemoteWebClient() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static WebClient.Builder builder() {
         ReactorClientHttpConnector reactorClientHttpConnector = new ReactorClientHttpConnector(
                 HttpClient.create().secure(ThrowingConsumer.unchecked(sslContextSpec -> sslContextSpec
