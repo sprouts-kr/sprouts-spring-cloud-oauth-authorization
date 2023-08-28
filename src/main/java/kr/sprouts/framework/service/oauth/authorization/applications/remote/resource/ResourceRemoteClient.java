@@ -35,17 +35,12 @@ public class ResourceRemoteClient {
     }
 
     private <B, R> R post(String uri, B body, ParameterizedTypeReference<R> parameterizedTypeReference) {
-        try {
-            return webClient.post()
-                    .uri(uriBuilder -> uriBuilder.path(uri).build())
-                    .bodyValue(body)
-                    .retrieve()
-                    .bodyToMono(parameterizedTypeReference)
-                    .blockOptional()
-                    .orElseThrow();
-        } catch (Throwable e) {
-            log.error(e.getMessage());
-            throw new RuntimeException(e);
-        }
+        return webClient.post()
+                .uri(uriBuilder -> uriBuilder.path(uri).build())
+                .bodyValue(body)
+                .retrieve()
+                .bodyToMono(parameterizedTypeReference)
+                .blockOptional()
+                .orElseThrow();
     }
 }
