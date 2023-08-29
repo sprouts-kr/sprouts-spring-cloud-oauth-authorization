@@ -3,12 +3,17 @@ package kr.sprouts.framework.service.oauth.authorization.applications.remote.res
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import java.util.Optional;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter @Setter
 public class ResourceRemoteResponseBody<T> {
-    private Boolean succeeded;
+    @Getter
+    private Boolean succeeded = Boolean.FALSE;
     private T content;
+
+    public Optional<T> getContent() {
+        return Optional.ofNullable(content);
+    }
 }
