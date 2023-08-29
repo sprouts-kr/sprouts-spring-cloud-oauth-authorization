@@ -1,8 +1,8 @@
-package kr.sprouts.framework.service.oauth.authorization.applications.authorize.dto.response;
+package kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import kr.sprouts.framework.autoconfigure.web.response.components.base.BaseResponse;
-import kr.sprouts.framework.service.oauth.authorization.applications.authorize.dto.proxy.MemberProxy;
+import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.dto.proxy.MemberProxy;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

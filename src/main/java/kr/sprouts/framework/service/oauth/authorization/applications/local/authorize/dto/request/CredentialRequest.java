@@ -1,4 +1,4 @@
-package kr.sprouts.framework.service.oauth.authorization.applications.authorize.dto.request;
+package kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.dto.request;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

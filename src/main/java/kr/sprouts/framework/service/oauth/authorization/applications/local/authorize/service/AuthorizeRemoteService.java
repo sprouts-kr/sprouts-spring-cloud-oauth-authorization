@@ -1,4 +1,4 @@
-package kr.sprouts.framework.service.oauth.authorization.applications.authorize.service;
+package kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.service;
 
 import kr.sprouts.framework.autoconfigure.security.credential.provider.components.ApiKeyCredentialProvider;
 import kr.sprouts.framework.autoconfigure.security.credential.provider.components.ApiKeySubject;
@@ -10,17 +10,19 @@ import kr.sprouts.framework.library.security.credential.Credential;
 import kr.sprouts.framework.library.security.credential.CredentialHeaderSpec;
 import kr.sprouts.framework.library.security.credential.codec.Codec;
 import kr.sprouts.framework.library.security.credential.codec.CodecType;
-import kr.sprouts.framework.service.oauth.authorization.applications.authorize.dto.proxy.AuthorizationProxy;
-import kr.sprouts.framework.service.oauth.authorization.applications.authorize.dto.proxy.CredentialProxy;
-import kr.sprouts.framework.service.oauth.authorization.applications.authorize.dto.proxy.MemberProxy;
-import kr.sprouts.framework.service.oauth.authorization.applications.authorize.exception.AuthorizeRemoteServiceInitializeFailedException;
-import kr.sprouts.framework.service.oauth.authorization.applications.authorize.exception.UnAuthorizedException;
+import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.dto.proxy.AuthorizationProxy;
+import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.dto.proxy.CredentialProxy;
+import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.dto.proxy.MemberProxy;
+import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.exception.AuthorizeRemoteServiceInitializeFailedException;
+import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.exception.UnAuthorizedException;
 import kr.sprouts.framework.service.oauth.authorization.applications.remote.resource.ResourceRemoteClient;
+import kr.sprouts.framework.service.oauth.authorization.applications.remote.resource.dto.response.MemberRemoteResponse;
+import kr.sprouts.framework.service.oauth.authorization.applications.remote.resource.dto.response.MemberVerificationRemoteResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -28,6 +30,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Service
 @Transactional(readOnly = true)
+@Slf4j
 public class AuthorizeRemoteService {
     private final ResourceRemoteClient resourceRemoteClient;
     private final CredentialProviderManager credentialProviderManager;
@@ -53,33 +56,50 @@ public class AuthorizeRemoteService {
     }
 
     public CredentialProxy verification(UUID providerId, String email, String password) {
-        AtomicReference<MemberProxy> memberProxyAtomicReference = new AtomicReference<>();
+        AtomicReference<MemberVerificationRemoteResponse> contentAtomicReference = new AtomicReference<>();
 
-        Optional.ofNullable(resourceRemoteClient.verification(email, password).getContent()).ifPresent(verification -> {
-            if (Boolean.FALSE.equals(verification.isVerification()) || verification.getMember() == null || verification.getMember().getId() == null) {
-                throw new UnAuthorizedException();
-            }
-            memberProxyAtomicReference.set(MemberProxy.fromRemoteResponse(verification.getMember()));
-        });
+        resourceRemoteClient.verification(email, password).getContent().ifPresentOrElse(content -> {
+            if (Boolean.FALSE.equals(content.isVerification())) throw new UnAuthorizedException();
 
-        MemberProxy member = memberProxyAtomicReference.get();
+            contentAtomicReference.set(content);
+        }, UnAuthorizedException::new);
+
+        AtomicReference<MemberRemoteResponse> memberAtomicReference = new AtomicReference<>();
+
+        contentAtomicReference.get().getMember().ifPresentOrElse(member -> {
+            if (member.getId() == null) throw new UnAuthorizedException();
+
+            memberAtomicReference.set(member);
+        }, UnAuthorizedException::new);
 
         AtomicReference<Credential> credentialAtomicReference = new AtomicReference<>();
 
-        credentialProviderManager.get(providerId).ifPresent(credentialProvider -> {
+        credentialProviderManager.getProvider(providerId).ifPresentOrElse(credentialProvider -> {
             if (credentialProvider instanceof ApiKeyCredentialProvider) {
-                credentialAtomicReference.set(((ApiKeyCredentialProvider)credentialProvider).provide(ApiKeySubject.of(member.getId())));
+                credentialAtomicReference.set(
+                        ((ApiKeyCredentialProvider) credentialProvider).provide(ApiKeySubject.of(memberAtomicReference.get().getId()))
+                );
             } else if (credentialProvider instanceof BearerTokenCredentialProvider) {
-                credentialAtomicReference.set(((BearerTokenCredentialProvider) credentialProvider).provide(BearerTokenSubject.of(member.getId(), 1L)));
+                credentialAtomicReference.set(
+                        ((BearerTokenCredentialProvider) credentialProvider).provide(BearerTokenSubject.of(memberAtomicReference.get().getId(), 60L))
+                );
+            } else {
+                throw new UnAuthorizedException();
             }
-        });
+        }, UnAuthorizedException::new);
 
         if (credentialAtomicReference.get() == null) {
             throw new UnAuthorizedException();
         }
 
-        AuthorizationProxy authorizationProxy = AuthorizationProxy.of(credentialHeaderSpec.getName(), isEmpty(credentialHeaderSpec.getPrefix()) ? codec.encodeToString(SerializationUtils.serialize(credentialAtomicReference.get())) : String.format("%s %s", credentialHeaderSpec.getPrefix(), codec.encodeToString(SerializationUtils.serialize(credentialAtomicReference.get()))));
+        String encodedCredential = codec.encodeToString(SerializationUtils.serialize(credentialAtomicReference.get()));
 
-        return CredentialProxy.of(authorizationProxy, member);
+        String authorizationValue = isEmpty(credentialHeaderSpec.getPrefix()) ?
+                encodedCredential : String.format("%s %s", credentialHeaderSpec.getPrefix(), encodedCredential);
+
+        return CredentialProxy.of(
+                AuthorizationProxy.of(credentialHeaderSpec.getName(), authorizationValue),
+                MemberProxy.fromRemoteResponse(memberAtomicReference.get())
+        );
     }
 }

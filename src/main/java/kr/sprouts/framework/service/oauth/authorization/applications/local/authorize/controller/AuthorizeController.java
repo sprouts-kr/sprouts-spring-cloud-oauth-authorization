@@ -1,10 +1,10 @@
-package kr.sprouts.framework.service.oauth.authorization.applications.authorize.controller;
+package kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.controller;
 
 import kr.sprouts.framework.autoconfigure.web.response.components.entity.StructuredResponse;
 import kr.sprouts.framework.autoconfigure.web.response.components.entity.StructuredResponseEntity;
-import kr.sprouts.framework.service.oauth.authorization.applications.authorize.dto.request.CredentialRequest;
-import kr.sprouts.framework.service.oauth.authorization.applications.authorize.dto.response.CredentialResponse;
-import kr.sprouts.framework.service.oauth.authorization.applications.authorize.service.AuthorizeRemoteService;
+import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.dto.request.CredentialRequest;
+import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.dto.response.CredentialResponse;
+import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.service.AuthorizeRemoteService;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

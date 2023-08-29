@@ -1,4 +1,4 @@
-package kr.sprouts.framework.service.oauth.authorization.applications.authorize.exception;
+package kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.exception;
 
 import kr.sprouts.framework.autoconfigure.web.response.components.base.BaseCommitException;
 import org.springframework.http.HttpStatus;
