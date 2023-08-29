@@ -4,7 +4,7 @@ import kr.sprouts.framework.autoconfigure.web.response.components.entity.Structu
 import kr.sprouts.framework.autoconfigure.web.response.components.entity.StructuredResponseEntity;
 import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.dto.request.CredentialRequest;
 import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.dto.response.CredentialResponse;
-import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.service.AuthorizeRemoteService;
+import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.service.AuthorizeService;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,16 +17,16 @@ import java.util.UUID;
 @RequestMapping(value = AuthorizeController.REQUEST_PATH)
 public class AuthorizeController {
     static final String REQUEST_PATH = "authorize";
-    private final AuthorizeRemoteService authorizeRemoteService;
+    private final AuthorizeService authorizeService;
 
-    public AuthorizeController(AuthorizeRemoteService authorizeRemoteService) {
-        this.authorizeRemoteService = authorizeRemoteService;
+    public AuthorizeController(AuthorizeService authorizeService) {
+        this.authorizeService = authorizeService;
     }
 
     @PostMapping(value = "/providers/{providerId}/credential")
     public StructuredResponseEntity credential(@PathVariable(value = "providerId") UUID providerId, @RequestBody CredentialRequest request) {
         return StructuredResponse.succeeded(CredentialResponse.fromProxy(
-                authorizeRemoteService.verification(providerId, request.getEmail(), request.getPassword())
+                authorizeService.verification(providerId, request.getEmail(), request.getPassword())
         ));
     }
 }

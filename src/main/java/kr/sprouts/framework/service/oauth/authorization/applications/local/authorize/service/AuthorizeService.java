@@ -31,15 +31,15 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @Service
 @Transactional(readOnly = true)
 @Slf4j
-public class AuthorizeRemoteService {
+public class AuthorizeService {
     private final ResourceRemoteClient resourceRemoteClient;
     private final CredentialProviderManager credentialProviderManager;
     private final CredentialHeaderSpec credentialHeaderSpec;
     private final Codec codec;
 
-    public AuthorizeRemoteService(ResourceRemoteClient resourceRemoteClient,
-                                  CredentialProviderManager credentialProviderManager,
-                                  CredentialProviderConfigurationProperty credentialProviderConfigurationProperty) {
+    public AuthorizeService(ResourceRemoteClient resourceRemoteClient,
+                            CredentialProviderManager credentialProviderManager,
+                            CredentialProviderConfigurationProperty credentialProviderConfigurationProperty) {
         this.resourceRemoteClient = resourceRemoteClient;
         this.credentialProviderManager = credentialProviderManager;
         this.credentialHeaderSpec = credentialProviderConfigurationProperty.getHeader();
