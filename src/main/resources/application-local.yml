@@ -121,10 +121,10 @@ local:
   authorize:
     accessToken:
       providerId: 00000083-3bae-4b13-b033-ebd8e779a1b0
-      validityInMinutes: 60
+      validityInMinutes: 30
     refreshToken:
       providerId: eeeeee4b-38b8-4ed1-b7ac-ae959aab7d23
-      validityInMinutes: 1440
+      validityInMinutes: 120
 
 remote:
   resource:
@@ -154,8 +154,9 @@ sprouts:
         - /actuator/**
         - /h2-console/**
       permit-post.patterns:
+        - /authorize
+        - /authorize/refresh
         - /authorize/providers/**/credential
-        - /authorize/access-token
     credential:
       header:
         name: Authorization

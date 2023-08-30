@@ -2,6 +2,7 @@ package kr.sprouts.framework.service.oauth.authorization.applications.remote.res
 
 import kr.sprouts.framework.service.oauth.authorization.applications.remote.resource.dto.ResourceRemoteResponseBody;
 import kr.sprouts.framework.service.oauth.authorization.applications.remote.resource.dto.request.MemberVerificationRequest;
+import kr.sprouts.framework.service.oauth.authorization.applications.remote.resource.dto.response.MemberRemoteResponse;
 import kr.sprouts.framework.service.oauth.authorization.applications.remote.resource.dto.response.MemberVerificationRemoteResponse;
 import kr.sprouts.framework.service.oauth.authorization.applications.remote.resource.exception.ResourceWebClientInitializeFailedException;
 import kr.sprouts.framework.service.oauth.authorization.components.webflux.RemoteWebClient;
@@ -9,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
@@ -30,8 +33,21 @@ public class ResourceRemoteClient {
         this.webClient = RemoteWebClient.create(host + contextPath, RemoteWebClient.DefaultHeader.of(authorizationHeader, isEmpty(authorizationPrefix) ? authorizationValue : String.format("%s %s", authorizationPrefix, authorizationValue)));
     }
 
-    public ResourceRemoteResponseBody<MemberVerificationRemoteResponse> verification(String email, String password) {
+    public ResourceRemoteResponseBody<MemberRemoteResponse> getMemberById(UUID memberId) {
+        return get(String.format("/members/%s", memberId), new ParameterizedTypeReference<>() { });
+    }
+
+    public ResourceRemoteResponseBody<MemberVerificationRemoteResponse> verificationMember(String email, String password) {
         return post("/members/verification", MemberVerificationRequest.of(email, password), new ParameterizedTypeReference<>() { });
+    }
+
+    private <R> R get(String uri, ParameterizedTypeReference<R> parameterizedTypeReference) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder.path(uri).build())
+                .retrieve()
+                .bodyToMono(parameterizedTypeReference)
+                .blockOptional()
+                .orElseThrow();
     }
 
     private <B, R> R post(String uri, B body, ParameterizedTypeReference<R> parameterizedTypeReference) {

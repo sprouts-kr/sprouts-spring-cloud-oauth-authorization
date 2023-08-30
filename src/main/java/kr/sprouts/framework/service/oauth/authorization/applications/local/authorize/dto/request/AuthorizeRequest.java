@@ -3,7 +3,7 @@ package kr.sprouts.framework.service.oauth.authorization.applications.local.auth
 import lombok.Data;
 
 @Data
-public class AccessTokenRequest {
+public class AuthorizeRequest {
     private String email;
     private String password;
 }
