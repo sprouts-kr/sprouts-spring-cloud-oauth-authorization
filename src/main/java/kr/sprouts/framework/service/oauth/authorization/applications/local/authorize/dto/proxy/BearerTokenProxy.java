@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PUBLIC, staticName = "of")
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-public class AccessTokenProxy {
-    private AuthorizationProxy authorization;
-    private MemberProxy member;
+public class BearerTokenProxy {
+    private String header;
+    private String value;
+    private Long validityInMinutes;
 }
