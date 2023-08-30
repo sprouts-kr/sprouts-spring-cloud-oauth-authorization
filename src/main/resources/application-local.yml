@@ -155,6 +155,7 @@ sprouts:
         - /h2-console/**
       permit-post.patterns:
         - /authorize/providers/**/credential
+        - /authorize/access-token
     credential:
       header:
         name: Authorization
