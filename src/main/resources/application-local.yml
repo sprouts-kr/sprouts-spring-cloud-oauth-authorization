@@ -117,6 +117,15 @@ logging.level:
   org.zalando.logbook: TRACE
   kr.sprouts: DEBUG
 
+local:
+  authorize:
+    accessToken:
+      providerId: 00000083-3bae-4b13-b033-ebd8e779a1b0
+      validityInMinutes: 60
+    refreshToken:
+      providerId: eeeeee4b-38b8-4ed1-b7ac-ae959aab7d23
+      validityInMinutes: 1440
+
 remote:
   resource:
     host: http://gateway.framework.sprouts.kr

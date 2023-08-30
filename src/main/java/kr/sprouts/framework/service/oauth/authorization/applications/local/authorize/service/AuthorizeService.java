@@ -20,6 +20,7 @@ import kr.sprouts.framework.service.oauth.authorization.applications.remote.reso
 import kr.sprouts.framework.service.oauth.authorization.applications.remote.resource.dto.response.MemberVerificationRemoteResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,10 +37,18 @@ public class AuthorizeService {
     private final CredentialProviderManager credentialProviderManager;
     private final CredentialHeaderSpec credentialHeaderSpec;
     private final Codec codec;
+    private final UUID accessTokenProviderId;
+    private final Long accessTokenValidityInMinutes;
+    private final UUID refreshTokenProviderId;
+    private final Long refreshTokenValidityInMinutes;
 
     public AuthorizeService(ResourceRemoteClient resourceRemoteClient,
                             CredentialProviderManager credentialProviderManager,
-                            CredentialProviderConfigurationProperty credentialProviderConfigurationProperty) {
+                            CredentialProviderConfigurationProperty credentialProviderConfigurationProperty,
+                            @Value("${local.authorize.accessToken.providerId}") UUID accessTokenProviderId,
+                            @Value("${local.authorize.accessToken.validityInMinutes}") Long accessTokenValidityInMinutes,
+                            @Value("${local.authorize.refreshToken.providerId}") UUID refreshTokenProviderId,
+                            @Value("${local.authorize.refreshToken.validityInMinutes}") Long refreshTokenValidityInMinutes) {
         this.resourceRemoteClient = resourceRemoteClient;
         this.credentialProviderManager = credentialProviderManager;
         this.credentialHeaderSpec = credentialProviderConfigurationProperty.getHeader();
