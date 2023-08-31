@@ -13,7 +13,7 @@ import kr.sprouts.framework.library.security.credential.codec.CodecType;
 import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.dto.proxy.AuthorizeProxy;
 import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.dto.proxy.BearerTokenProxy;
 import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.dto.proxy.MemberProxy;
-import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.exception.AuthorizeRemoteServiceInitializeFailedException;
+import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.exception.AuthorizeServiceCreateFailedException;
 import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.exception.UnAuthorizedException;
 import kr.sprouts.framework.service.oauth.authorization.applications.remote.resource.ResourceRemoteClient;
 import kr.sprouts.framework.service.oauth.authorization.applications.remote.resource.dto.response.MemberRemoteResponse;
@@ -56,17 +56,17 @@ public class AuthorizeService {
         this.credentialHeaderSpec = credentialProviderConfigurationProperty.getHeader();
 
         if (this.credentialProviderManager == null || this.credentialHeaderSpec == null || isEmpty(this.credentialHeaderSpec.getCodec())) {
-            throw new AuthorizeRemoteServiceInitializeFailedException();
+            throw new AuthorizeServiceCreateFailedException();
         }
 
         this.codec = CodecType.fromName(this.credentialHeaderSpec.getCodec()).getCodecSupplier().get();
 
         if (this.codec == null) {
-            throw new AuthorizeRemoteServiceInitializeFailedException();
+            throw new AuthorizeServiceCreateFailedException();
         }
 
         if (accessTokenProviderId == null || accessTokenValidityInMinutes == null || refreshTokenProviderId == null || refreshTokenValidityInMinutes == null) {
-            throw new AuthorizeRemoteServiceInitializeFailedException();
+            throw new AuthorizeServiceCreateFailedException();
         }
 
         this.accessTokenProviderId = accessTokenProviderId;
