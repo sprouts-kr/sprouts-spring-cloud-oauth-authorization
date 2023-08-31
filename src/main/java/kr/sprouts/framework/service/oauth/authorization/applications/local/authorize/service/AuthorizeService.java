@@ -14,7 +14,7 @@ import kr.sprouts.framework.service.oauth.authorization.applications.local.autho
 import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.dto.proxy.BearerTokenProxy;
 import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.dto.proxy.MemberProxy;
 import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.exception.AuthorizeServiceCreateFailedException;
-import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.exception.UnAuthorizedException;
+import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.exception.commit.UnAuthorizedException;
 import kr.sprouts.framework.service.oauth.authorization.applications.remote.resource.ResourceRemoteClient;
 import kr.sprouts.framework.service.oauth.authorization.applications.remote.resource.dto.response.MemberRemoteResponse;
 import kr.sprouts.framework.service.oauth.authorization.applications.remote.resource.dto.response.MemberVerificationRemoteResponse;
