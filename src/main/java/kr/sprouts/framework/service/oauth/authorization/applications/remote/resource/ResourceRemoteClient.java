@@ -4,7 +4,6 @@ import kr.sprouts.framework.service.oauth.authorization.applications.remote.reso
 import kr.sprouts.framework.service.oauth.authorization.applications.remote.resource.dto.request.MemberVerificationRequest;
 import kr.sprouts.framework.service.oauth.authorization.applications.remote.resource.dto.response.MemberRemoteResponse;
 import kr.sprouts.framework.service.oauth.authorization.applications.remote.resource.dto.response.MemberVerificationRemoteResponse;
-import kr.sprouts.framework.service.oauth.authorization.applications.remote.resource.exception.ResourceWebClientInitializeFailedException;
 import kr.sprouts.framework.service.oauth.authorization.components.webflux.RemoteWebClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,10 +26,17 @@ public class ResourceRemoteClient {
                                 @Value("${remote.resource.authorization.value}") String authorizationValue) {
 
         if (isEmpty(host) || isEmpty(contextPath) || isEmpty(authorizationHeader) || isEmpty(authorizationValue)) {
-            throw new ResourceWebClientInitializeFailedException();
+            throw new RemoteClientCreateFailedException();
         }
 
-        this.webClient = RemoteWebClient.create(host + contextPath, RemoteWebClient.DefaultHeader.of(authorizationHeader, isEmpty(authorizationPrefix) ? authorizationValue : String.format("%s %s", authorizationPrefix, authorizationValue)));
+        String baseUrl = host + contextPath;
+
+        this.webClient = RemoteWebClient.create(
+                baseUrl,
+                RemoteWebClient.DefaultHeader.of(
+                        authorizationHeader,
+                        isEmpty(authorizationPrefix) ? authorizationValue : String.format("%s %s", authorizationPrefix, authorizationValue))
+        );
     }
 
     public ResourceRemoteResponseBody<MemberRemoteResponse> getMemberById(UUID memberId) {
@@ -59,4 +65,6 @@ public class ResourceRemoteClient {
                 .blockOptional()
                 .orElseThrow();
     }
+
+    private static class RemoteClientCreateFailedException extends RuntimeException { }
 }

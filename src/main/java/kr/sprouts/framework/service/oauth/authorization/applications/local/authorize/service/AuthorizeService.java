@@ -2,8 +2,6 @@ package kr.sprouts.framework.service.oauth.authorization.applications.local.auth
 
 import kr.sprouts.framework.autoconfigure.security.credential.consumer.components.BearerTokenCredentialConsumer;
 import kr.sprouts.framework.autoconfigure.security.credential.consumer.components.CredentialConsumerManager;
-import kr.sprouts.framework.autoconfigure.security.credential.provider.components.ApiKeyCredentialProvider;
-import kr.sprouts.framework.autoconfigure.security.credential.provider.components.ApiKeySubject;
 import kr.sprouts.framework.autoconfigure.security.credential.provider.components.BearerTokenCredentialProvider;
 import kr.sprouts.framework.autoconfigure.security.credential.provider.components.BearerTokenSubject;
 import kr.sprouts.framework.autoconfigure.security.credential.provider.components.CredentialProviderManager;
@@ -12,13 +10,12 @@ import kr.sprouts.framework.library.security.credential.Credential;
 import kr.sprouts.framework.library.security.credential.CredentialHeaderSpec;
 import kr.sprouts.framework.library.security.credential.codec.Codec;
 import kr.sprouts.framework.library.security.credential.codec.CodecType;
-import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.dto.proxy.AuthorizationProxy;
 import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.dto.proxy.AuthorizeProxy;
 import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.dto.proxy.BearerTokenProxy;
-import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.dto.proxy.CredentialProxy;
 import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.dto.proxy.MemberProxy;
-import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.exception.AuthorizeRemoteServiceInitializeFailedException;
-import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.exception.UnAuthorizedException;
+import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.exception.commit.UnAuthorizedException;
+import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.exception.rollback.CredentialProviderNotFoundException;
+import kr.sprouts.framework.service.oauth.authorization.applications.local.authorize.exception.rollback.UnsupportedCredentialProviderException;
 import kr.sprouts.framework.service.oauth.authorization.applications.remote.resource.ResourceRemoteClient;
 import kr.sprouts.framework.service.oauth.authorization.applications.remote.resource.dto.response.MemberRemoteResponse;
 import kr.sprouts.framework.service.oauth.authorization.applications.remote.resource.dto.response.MemberVerificationRemoteResponse;
@@ -59,18 +56,23 @@ public class AuthorizeService {
         this.credentialConsumerManager = credentialConsumerManager;
         this.credentialHeaderSpec = credentialProviderConfigurationProperty.getHeader();
 
-        if (this.credentialProviderManager == null || this.credentialHeaderSpec == null || isEmpty(this.credentialHeaderSpec.getCodec())) {
-            throw new AuthorizeRemoteServiceInitializeFailedException();
+        if (this.credentialProviderManager == null
+                || this.credentialHeaderSpec == null
+                || isEmpty(this.credentialHeaderSpec.getCodec())) {
+            throw new ServiceCreateFailedException();
         }
 
         this.codec = CodecType.fromName(this.credentialHeaderSpec.getCodec()).getCodecSupplier().get();
 
         if (this.codec == null) {
-            throw new AuthorizeRemoteServiceInitializeFailedException();
+            throw new ServiceCreateFailedException();
         }
 
-        if (accessTokenProviderId == null || accessTokenValidityInMinutes == null || refreshTokenProviderId == null || refreshTokenValidityInMinutes == null) {
-            throw new AuthorizeRemoteServiceInitializeFailedException();
+        if (accessTokenProviderId == null
+                || accessTokenValidityInMinutes == null
+                || refreshTokenProviderId == null
+                || refreshTokenValidityInMinutes == null) {
+            throw new ServiceCreateFailedException();
         }
 
         this.accessTokenProviderId = accessTokenProviderId;
@@ -97,94 +99,91 @@ public class AuthorizeService {
     }
 
     private BearerTokenProxy createRefreshToken(UUID memberId) {
-        String refreshToken = bearerToken(refreshTokenProviderId, refreshTokenValidityInMinutes, memberId);
-        String authorizationValue = isEmpty(credentialHeaderSpec.getPrefix()) ? refreshToken : String.format("%s %s", credentialHeaderSpec.getPrefix(), refreshToken);
-
-        return BearerTokenProxy.of(credentialHeaderSpec.getName(), authorizationValue, refreshTokenValidityInMinutes);
+        return BearerTokenProxy.of(
+                credentialHeaderSpec.getName(),
+                appendPrefix(bearerToken(refreshTokenProviderId, refreshTokenValidityInMinutes, memberId)),
+                refreshTokenValidityInMinutes
+        );
     }
 
     private BearerTokenProxy createAccessToken(UUID memberId) {
-        String accessToken = bearerToken(accessTokenProviderId, accessTokenValidityInMinutes, memberId);
-        String authorizationValue = isEmpty(credentialHeaderSpec.getPrefix()) ? accessToken : String.format("%s %s", credentialHeaderSpec.getPrefix(), accessToken);
-
-        return BearerTokenProxy.of(credentialHeaderSpec.getName(), authorizationValue, accessTokenValidityInMinutes);
+        return BearerTokenProxy.of(
+                credentialHeaderSpec.getName(),
+                appendPrefix(bearerToken(accessTokenProviderId, accessTokenValidityInMinutes, memberId)),
+                accessTokenValidityInMinutes
+        );
     }
 
     private MemberProxy verification(String authorizationValue) {
-        if (isEmpty(authorizationValue) || Boolean.FALSE.equals(authorizationValue.startsWith(credentialHeaderSpec.getPrefix()) || authorizationValue.trim().length() <= credentialHeaderSpec.getPrefix().length())) {
+        try {
+            if (isEmpty(authorizationValue)
+                    || Boolean.FALSE.equals(authorizationValue.startsWith(credentialHeaderSpec.getPrefix())
+                    || authorizationValue.trim().length() <= credentialHeaderSpec.getPrefix().length())) {
+                throw new UnAuthorizedException();
+            }
+
+            Object credentialObject = SerializationUtils.deserialize(
+                    codec.decode(authorizationValue.substring(credentialHeaderSpec.getPrefix().length()).trim())
+            );
+
+            if (Boolean.FALSE.equals(credentialObject instanceof Credential)) {
+                throw new UnAuthorizedException();
+            }
+
+            Credential credential = (Credential) credentialObject;
+
+            AtomicReference<BearerTokenCredentialConsumer> credentialConsumerAtomicReference = new AtomicReference<>();
+
+            for (UUID targetConsumerId : credential.getConsumerIds()) {
+                credentialConsumerManager.getConsumer(targetConsumerId).ifPresent(credentialConsumer -> {
+                    if (credentialConsumer instanceof BearerTokenCredentialConsumer) {
+                        credentialConsumerAtomicReference.set((BearerTokenCredentialConsumer) credentialConsumer);
+                    }
+                });
+
+                if (credentialConsumerAtomicReference.get() != null) break;
+            }
+
+            if (credentialConsumerAtomicReference.get() == null) {
+                throw new UnAuthorizedException();
+            }
+
+            UUID memberId = credentialConsumerAtomicReference.get().consume(credential).getSubject().getMemberId();
+
+            AtomicReference<MemberRemoteResponse> memberRemoteResponseAtomicReference = new AtomicReference<>();
+            resourceRemoteClient.getMemberById(memberId).getContent().ifPresentOrElse(content -> {
+                if (Boolean.FALSE.equals("ACTIVE".equals(content.getStatus()))) throw new UnAuthorizedException();
+
+                memberRemoteResponseAtomicReference.set(content);
+            }, UnAuthorizedException::new);
+
+            return MemberProxy.fromRemoteResponse(memberRemoteResponseAtomicReference.get());
+        } catch (RuntimeException e) {
             throw new UnAuthorizedException();
         }
-
-        Object credentialObject = SerializationUtils.deserialize(codec.decode(authorizationValue.substring(credentialHeaderSpec.getPrefix().length()).trim()));
-
-        if (Boolean.FALSE.equals(credentialObject instanceof Credential)) {
-            throw new UnAuthorizedException();
-        }
-
-        Credential credential = (Credential) credentialObject;
-
-        AtomicReference<BearerTokenCredentialConsumer> credentialConsumerAtomicReference = new AtomicReference<>();
-
-        for (UUID targetConsumerId : credential.getConsumerIds()) {
-            credentialConsumerManager.getConsumer(targetConsumerId).ifPresent(credentialConsumer -> {
-                if (credentialConsumer instanceof BearerTokenCredentialConsumer) {
-                    credentialConsumerAtomicReference.set((BearerTokenCredentialConsumer) credentialConsumer);
-                }
-            });
-
-            if (credentialConsumerAtomicReference.get() != null) break;
-        }
-
-        if (credentialConsumerAtomicReference.get() == null) {
-            throw new UnAuthorizedException();
-        }
-
-        BearerTokenCredentialConsumer consumer =  credentialConsumerAtomicReference.get();
-
-        UUID memberId = consumer.consume(credential).getSubject().getMemberId();
-
-        AtomicReference<MemberRemoteResponse> memberRemoteResponseAtomicReference = new AtomicReference<>();
-        resourceRemoteClient.getMemberById(memberId).getContent().ifPresentOrElse(content -> {
-            if (Boolean.FALSE.equals("ACTIVE".equals(content.getStatus()))) throw new UnAuthorizedException();
-
-            memberRemoteResponseAtomicReference.set(content);
-        }, UnAuthorizedException::new);
-
-        return MemberProxy.fromRemoteResponse(memberRemoteResponseAtomicReference.get());
     }
 
     private MemberProxy verification(String email, String password) {
-        AtomicReference<MemberVerificationRemoteResponse> contentAtomicReference = new AtomicReference<>();
+        try {
+            AtomicReference<MemberVerificationRemoteResponse> contentAtomicReference = new AtomicReference<>();
 
-        resourceRemoteClient.verificationMember(email, password).getContent().ifPresentOrElse(content -> {
-            if (Boolean.FALSE.equals(content.isVerification())) throw new UnAuthorizedException();
+            resourceRemoteClient.verificationMember(email, password).getContent().ifPresentOrElse(content -> {
+                if (Boolean.FALSE.equals(content.isVerification())) throw new UnAuthorizedException();
 
-            contentAtomicReference.set(content);
-        }, UnAuthorizedException::new);
+                contentAtomicReference.set(content);
+            }, UnAuthorizedException::new);
 
-        AtomicReference<MemberRemoteResponse> memberAtomicReference = new AtomicReference<>();
+            AtomicReference<MemberRemoteResponse> memberRemoteResponseAtomicReference = new AtomicReference<>();
+            contentAtomicReference.get().getMember().ifPresentOrElse(member -> {
+                if (member.getId() == null) throw new UnAuthorizedException();
 
-        contentAtomicReference.get().getMember().ifPresentOrElse(member -> {
-            if (member.getId() == null) throw new UnAuthorizedException();
+                memberRemoteResponseAtomicReference.set(member);
+            }, UnAuthorizedException::new);
 
-            memberAtomicReference.set(member);
-        }, UnAuthorizedException::new);
-
-        return MemberProxy.fromRemoteResponse(memberAtomicReference.get());
-    }
-
-    private String apiKey(UUID providerId, UUID memberId) {
-        AtomicReference<ApiKeyCredentialProvider> credentialProviderAtomicReference = new AtomicReference<>();
-
-        credentialProviderManager.getProvider(providerId).ifPresentOrElse(credentialProvider -> {
-            if (Boolean.FALSE.equals(credentialProvider instanceof ApiKeyCredentialProvider)) {
-                throw new RuntimeException("Unsupported credential provider.");
-            }
-
-            credentialProviderAtomicReference.set((ApiKeyCredentialProvider) credentialProvider);
-        }, () -> { throw new RuntimeException("Credential provider not found."); });
-
-        return codec.encodeToString(SerializationUtils.serialize(credentialProviderAtomicReference.get().provide(ApiKeySubject.of(memberId))));
+            return MemberProxy.fromRemoteResponse(memberRemoteResponseAtomicReference.get());
+        } catch (RuntimeException e) {
+            throw new UnAuthorizedException();
+        }
     }
 
     private String bearerToken(UUID providerId, Long validityInMinutes, UUID memberId) {
@@ -192,60 +191,21 @@ public class AuthorizeService {
 
         credentialProviderManager.getProvider(providerId).ifPresentOrElse(credentialProvider -> {
             if (Boolean.FALSE.equals(credentialProvider instanceof BearerTokenCredentialProvider)) {
-                throw new RuntimeException("Unsupported credential provider.");
+                throw new UnsupportedCredentialProviderException();
             }
 
             credentialProviderAtomicReference.set((BearerTokenCredentialProvider) credentialProvider);
-        }, () -> { throw new RuntimeException("Credential provider not found."); });
+        }, CredentialProviderNotFoundException::new);
 
-        return codec.encodeToString(SerializationUtils.serialize(credentialProviderAtomicReference.get().provide(BearerTokenSubject.of(memberId, validityInMinutes))));
+        return codec.encodeToString(SerializationUtils.serialize(
+                credentialProviderAtomicReference.get().provide(BearerTokenSubject.of(memberId, validityInMinutes))
+        ));
     }
 
-    public CredentialProxy verification(UUID providerId, String email, String password) {
-        AtomicReference<MemberVerificationRemoteResponse> contentAtomicReference = new AtomicReference<>();
-
-        resourceRemoteClient.verificationMember(email, password).getContent().ifPresentOrElse(content -> {
-            if (Boolean.FALSE.equals(content.isVerification())) throw new UnAuthorizedException();
-
-            contentAtomicReference.set(content);
-        }, UnAuthorizedException::new);
-
-        AtomicReference<MemberRemoteResponse> memberAtomicReference = new AtomicReference<>();
-
-        contentAtomicReference.get().getMember().ifPresentOrElse(member -> {
-            if (member.getId() == null) throw new UnAuthorizedException();
-
-            memberAtomicReference.set(member);
-        }, UnAuthorizedException::new);
-
-        AtomicReference<Credential> credentialAtomicReference = new AtomicReference<>();
-
-        credentialProviderManager.getProvider(providerId).ifPresentOrElse(credentialProvider -> {
-            if (credentialProvider instanceof ApiKeyCredentialProvider) {
-                credentialAtomicReference.set(
-                        ((ApiKeyCredentialProvider) credentialProvider).provide(ApiKeySubject.of(memberAtomicReference.get().getId()))
-                );
-            } else if (credentialProvider instanceof BearerTokenCredentialProvider) {
-                credentialAtomicReference.set(
-                        ((BearerTokenCredentialProvider) credentialProvider).provide(BearerTokenSubject.of(memberAtomicReference.get().getId(), 60L))
-                );
-            } else {
-                throw new UnAuthorizedException();
-            }
-        }, UnAuthorizedException::new);
-
-        if (credentialAtomicReference.get() == null) {
-            throw new UnAuthorizedException();
-        }
-
-        String encodedCredential = codec.encodeToString(SerializationUtils.serialize(credentialAtomicReference.get()));
-
-        String authorizationValue = isEmpty(credentialHeaderSpec.getPrefix()) ?
-                encodedCredential : String.format("%s %s", credentialHeaderSpec.getPrefix(), encodedCredential);
-
-        return CredentialProxy.of(
-                AuthorizationProxy.of(credentialHeaderSpec.getName(), authorizationValue),
-                MemberProxy.fromRemoteResponse(memberAtomicReference.get())
-        );
+    private String appendPrefix(String authorizationValue) {
+        return isEmpty(credentialHeaderSpec.getPrefix()) ?
+                authorizationValue : String.format("%s %s", credentialHeaderSpec.getPrefix(), authorizationValue);
     }
+
+    private static class ServiceCreateFailedException extends RuntimeException { }
 }
