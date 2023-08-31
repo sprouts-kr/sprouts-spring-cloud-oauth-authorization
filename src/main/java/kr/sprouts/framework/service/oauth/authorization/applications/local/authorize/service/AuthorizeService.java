@@ -47,10 +47,10 @@ public class AuthorizeService {
     public AuthorizeService(ResourceRemoteClient resourceRemoteClient,
                             CredentialProviderManager credentialProviderManager,
                             CredentialConsumerManager credentialConsumerManager, CredentialProviderConfigurationProperty credentialProviderConfigurationProperty,
-                            @Value("${local.authorize.accessToken.providerId}") UUID accessTokenProviderId,
-                            @Value("${local.authorize.accessToken.validityInMinutes}") Long accessTokenValidityInMinutes,
-                            @Value("${local.authorize.refreshToken.providerId}") UUID refreshTokenProviderId,
-                            @Value("${local.authorize.refreshToken.validityInMinutes}") Long refreshTokenValidityInMinutes) {
+                            @Value("${sprouts.application.local.authorize.accessToken.providerId}") UUID accessTokenProviderId,
+                            @Value("${sprouts.application.local.authorize.accessToken.validityInMinutes}") Long accessTokenValidityInMinutes,
+                            @Value("${sprouts.application.local.authorize.refreshToken.providerId}") UUID refreshTokenProviderId,
+                            @Value("${sprouts.application.local.authorize.refreshToken.validityInMinutes}") Long refreshTokenValidityInMinutes) {
         this.resourceRemoteClient = resourceRemoteClient;
         this.credentialProviderManager = credentialProviderManager;
         this.credentialConsumerManager = credentialConsumerManager;
