@@ -93,17 +93,19 @@ public class AuthorizeService {
     }
 
     private BearerTokenProxy createRefreshToken(UUID memberId) {
-        String refreshToken = bearerToken(refreshTokenProviderId, refreshTokenValidityInMinutes, memberId);
-        String authorizationValue = isEmpty(credentialHeaderSpec.getPrefix()) ? refreshToken : String.format("%s %s", credentialHeaderSpec.getPrefix(), refreshToken);
-
-        return BearerTokenProxy.of(credentialHeaderSpec.getName(), authorizationValue, refreshTokenValidityInMinutes);
+        return BearerTokenProxy.of(
+                credentialHeaderSpec.getName(),
+                appendPrefix(bearerToken(refreshTokenProviderId, refreshTokenValidityInMinutes, memberId)),
+                refreshTokenValidityInMinutes
+        );
     }
 
     private BearerTokenProxy createAccessToken(UUID memberId) {
-        String accessToken = bearerToken(accessTokenProviderId, accessTokenValidityInMinutes, memberId);
-        String authorizationValue = isEmpty(credentialHeaderSpec.getPrefix()) ? accessToken : String.format("%s %s", credentialHeaderSpec.getPrefix(), accessToken);
-
-        return BearerTokenProxy.of(credentialHeaderSpec.getName(), authorizationValue, accessTokenValidityInMinutes);
+        return BearerTokenProxy.of(
+                credentialHeaderSpec.getName(),
+                appendPrefix(bearerToken(accessTokenProviderId, accessTokenValidityInMinutes, memberId)),
+                accessTokenValidityInMinutes
+        );
     }
 
     private MemberProxy verification(String authorizationValue) {
@@ -181,5 +183,9 @@ public class AuthorizeService {
         }, () -> { throw new RuntimeException("Credential provider not found."); });
 
         return codec.encodeToString(SerializationUtils.serialize(credentialProviderAtomicReference.get().provide(BearerTokenSubject.of(memberId, validityInMinutes))));
+    }
+
+    private String appendPrefix(String authorizationValue) {
+        return isEmpty(credentialHeaderSpec.getPrefix()) ? authorizationValue : String.format("%s %s", credentialHeaderSpec.getPrefix(), authorizationValue);
     }
 }
