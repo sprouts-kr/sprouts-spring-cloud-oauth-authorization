@@ -19,11 +19,11 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 public class ResourceRemoteClient {
     private final org.springframework.web.reactive.function.client.WebClient webClient;
 
-    public ResourceRemoteClient(@Value("${remote.resource.host}") String host,
-                                @Value("${remote.resource.contextPath}") String contextPath,
-                                @Value("${remote.resource.authorization.header}") String authorizationHeader,
-                                @Value("${remote.resource.authorization.prefix}") String authorizationPrefix,
-                                @Value("${remote.resource.authorization.value}") String authorizationValue) {
+    public ResourceRemoteClient(@Value("${sprouts.application.remote.resource.host}") String host,
+                                @Value("${sprouts.application.remote.resource.contextPath}") String contextPath,
+                                @Value("${sprouts.application.remote.resource.authorization.header}") String authorizationHeader,
+                                @Value("${sprouts.application.remote.resource.authorization.prefix}") String authorizationPrefix,
+                                @Value("${sprouts.application.remote.resource.authorization.value}") String authorizationValue) {
 
         if (isEmpty(host) || isEmpty(contextPath) || isEmpty(authorizationHeader) || isEmpty(authorizationValue)) {
             throw new RemoteClientCreateFailedException();
