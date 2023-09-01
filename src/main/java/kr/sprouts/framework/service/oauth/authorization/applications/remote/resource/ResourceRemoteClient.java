@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.UUID;
 
@@ -17,7 +18,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @Component
 @Slf4j
 public class ResourceRemoteClient {
-    private final org.springframework.web.reactive.function.client.WebClient webClient;
+    private final WebClient webClient;
 
     public ResourceRemoteClient(@Value("${sprouts.application.remote.resource.host}") String host,
                                 @Value("${sprouts.application.remote.resource.contextPath}") String contextPath,
