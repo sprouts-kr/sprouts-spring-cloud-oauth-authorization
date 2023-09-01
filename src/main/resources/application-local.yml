@@ -93,6 +93,31 @@ management:
     java:
       enabled: true
 
+resilience4j:
+  retry:
+    configs:
+      default:
+        maxRetryAttempts: 5
+        waitDuration: 1000
+    instances:
+      default:
+        baseConfig: default
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+        slidingWindowType: TIME_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 10
+        slowCallRateThreshold: 100
+        slowCallDurationThreshold: 60000
+        failureRateThreshold: 80
+        permittedNumberOfCallsInHalfOpenState: 10
+        waitDurationInOpenState: 10s
+    instances:
+      default:
+        baseConfig: default
+
 logbook:
   include:
     - ${server.servlet.context-path}/**

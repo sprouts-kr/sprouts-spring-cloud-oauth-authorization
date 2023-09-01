@@ -151,6 +151,7 @@ public class AuthorizeService {
             UUID memberId = credentialConsumerAtomicReference.get().consume(credential).getSubject().getMemberId();
 
             AtomicReference<MemberRemoteResponse> memberRemoteResponseAtomicReference = new AtomicReference<>();
+
             resourceRemoteClient.getMemberById(memberId).getContent().ifPresentOrElse(content -> {
                 if (Boolean.FALSE.equals("ACTIVE".equals(content.getStatus()))) throw new UnAuthorizedException();
 
