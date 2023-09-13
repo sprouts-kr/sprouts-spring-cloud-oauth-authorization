@@ -5,7 +5,7 @@ variables:
 
 include:
   - project: "gitlab-library/gitlab-ci"
-    ref: 0.0.4
+    ref: 0.0.6
     file:
       - 'template/maven-service-with-version/prepare.gitlab-ci.yml'
       - 'template/maven-service-with-version/build.maven.gitlab-ci.yml'
