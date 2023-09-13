@@ -28,10 +28,10 @@
         <versions.maven.plugin.version>2.10.0</versions.maven.plugin.version>
     </properties>
     <repositories>
-        <!-- personal repository -->
+        <!-- personal-repository -->
         <repository>
-            <id>personal-public</id>
-            <url>https://nexus.sprouts.kr/repository/maven/</url>
+            <id>personal-repository</id>
+            <url>https://nexus.devops.sprouts.kr/repository/maven/</url>
         </repository>
     </repositories>
     <dependencyManagement>
