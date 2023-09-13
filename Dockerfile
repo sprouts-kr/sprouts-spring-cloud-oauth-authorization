@@ -1,4 +1,4 @@
-FROM registry.nexus.sprouts.kr/openjdk:11-jre-slim
+FROM registry.nexus.devops.sprouts.kr/openjdk:11-jre-slim
 
 LABEL authors="jwseo@live.co.kr"
 
