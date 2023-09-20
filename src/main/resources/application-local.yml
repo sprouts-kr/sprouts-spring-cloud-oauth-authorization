@@ -55,23 +55,9 @@ spring:
           time_zone: Asia/Seoul
 
 eureka:
-  instance:
-    instance-id: ${random.uuid}
-    hostname: ${spring.cloud.client.hostname}
-    prefer-ip-address: true
-    lease-renewal-interval-in-seconds: 3
-    lease-expiration-duration-in-seconds: 10
   client:
     client:
-      enabled: true
-    healthcheck:
-      enabled: true
-    register-with-eureka: true
-    fetch-registry: true
-    registry-fetch-interval-seconds: 10
-    disable-delta: false
-    service-url:
-      defaultZone: http://discovery-01.framework.sprouts.kr/eureka, http://discovery-02.framework.sprouts.kr/eureka, http://discovery-03.framework.sprouts.kr/eureka
+      enabled: false
 
 management:
   endpoints:
