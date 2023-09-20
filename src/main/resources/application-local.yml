@@ -141,7 +141,7 @@ sprouts:
           validityInMinutes: 120
     remote:
       resource:
-        host: http://gateway.framework.sprouts.kr
+        host: http://gateway.framework.local
         contextPath: /framework/oauth/resource/api
         authorization:
           header: Authorization
