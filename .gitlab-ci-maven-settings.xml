@@ -23,11 +23,11 @@
             <url>http://0.0.0.0/</url>
             <blocked>true</blocked>
         </mirror>
-        <!-- personal-repository -->
+        <!-- devops-repository -->
         <mirror>
-            <id>personal-repository</id>
+            <id>devops-repository</id>
             <mirrorOf>central</mirrorOf>
-            <url>https://nexus.devops.sprouts.kr/repository/maven/</url>
+            <url>http://nexus.devops.local/repository/maven/</url>
             <blocked>false</blocked>
         </mirror>
     </mirrors>

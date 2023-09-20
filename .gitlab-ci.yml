@@ -1,11 +1,11 @@
 variables:
-  MAVEN_IMAGE: registry.nexus.devops.sprouts.kr/maven:3.8.6-openjdk-11-slim
-  DOCKER_IMAGE: registry.nexus.devops.sprouts.kr/docker:20.10.18
-  DOCKER_IN_DOCKER_IMAGE: registry.nexus.devops.sprouts.kr/docker:20.10.18-dind
+  MAVEN_IMAGE: registry.nexus.devops.local/maven:3.8.6-openjdk-11-slim
+  DOCKER_IMAGE: registry.nexus.devops.local/docker:20.10.18
+  DOCKER_IN_DOCKER_IMAGE: registry.nexus.devops.local/docker:20.10.18-dind
 
 include:
   - project: "gitlab-library/gitlab-ci"
-    ref: 0.0.6
+    ref: 0.0.7
     file:
       - 'template/maven-service-with-version/prepare.gitlab-ci.yml'
       - 'template/maven-service-with-version/build.maven.gitlab-ci.yml'
