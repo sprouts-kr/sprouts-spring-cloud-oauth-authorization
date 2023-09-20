@@ -20,8 +20,8 @@
         <logbook.version>2.16.0</logbook.version>
         <sprouts.logstash.appender.version>0.0.6</sprouts.logstash.appender.version>
         <sprouts.web.response.version>0.0.6</sprouts.web.response.version>
-        <sprouts.security.credential.provider.version>0.0.5</sprouts.security.credential.provider.version>
-        <sprouts.security.credential.consumer.version>0.0.5</sprouts.security.credential.consumer.version>
+        <sprouts.security.credential.provider.version>0.0.6</sprouts.security.credential.provider.version>
+        <sprouts.security.credential.consumer.version>0.0.6</sprouts.security.credential.consumer.version>
         <!-- plugin -->
         <apt.maven.plugin.version>1.1.3</apt.maven.plugin.version>
         <build.helper.maven.plugin.version>3.3.0</build.helper.maven.plugin.version>
