@@ -151,7 +151,7 @@ sprouts:
     name: LOGSTASH
     identifier: ${spring.application.name}-${spring.profiles.active}
     destinations:
-      - host: 192.168.0.100
+      - host: observability.local
         port: 5045
   web:
     response:
