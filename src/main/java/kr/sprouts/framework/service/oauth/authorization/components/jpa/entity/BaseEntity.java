@@ -5,7 +5,8 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import kr.sprouts.framework.service.oauth.authorization.components.jpa.value.SqlDateTime;
 import lombok.Getter;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -24,7 +25,7 @@ public class BaseEntity {
     private LocalDateTime createdOn;
     @CreatedBy
     @Column(updatable = false, length = 36)
-    @Type(type = "uuid-char")
+    @JdbcTypeCode(SqlTypes.CHAR)
     private UUID createdBy;
 
     @LastModifiedDate
@@ -32,7 +33,7 @@ public class BaseEntity {
     private LocalDateTime lastModifiedOn;
     @LastModifiedBy
     @Column(length = 36)
-    @Type(type = "uuid-char")
+    @JdbcTypeCode(SqlTypes.CHAR)
     private UUID lastModifiedBy;
 
     @Column(nullable = false)
