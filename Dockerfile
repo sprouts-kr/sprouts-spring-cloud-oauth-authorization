@@ -1,4 +1,4 @@
-FROM registry.nexus.devops.local/openjdk:11-jre-slim
+FROM registry.nexus.devops.local/eclipse-temurin:11-jdk-alpine
 
 LABEL authors="jwseo@live.co.kr"
 
