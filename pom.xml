@@ -5,8 +5,8 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.15</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>2.7.17</version>
+        <relativePath/>
     </parent>
     <groupId>kr.sprouts.framework.service</groupId>
     <artifactId>sprouts-spring-cloud-oauth-authorization</artifactId>
@@ -18,14 +18,12 @@
         <resilience4j.version>1.7.0</resilience4j.version>
         <querydsl.version>5.0.0</querydsl.version>
         <logbook.version>2.16.0</logbook.version>
-        <sprouts.logstash.appender.version>0.0.6</sprouts.logstash.appender.version>
-        <sprouts.web.response.version>0.0.6</sprouts.web.response.version>
-        <sprouts.security.credential.provider.version>0.0.6</sprouts.security.credential.provider.version>
-        <sprouts.security.credential.consumer.version>0.0.6</sprouts.security.credential.consumer.version>
+        <sprouts.logstash.appender.version>0.0.8</sprouts.logstash.appender.version>
+        <sprouts.web.response.version>0.0.7</sprouts.web.response.version>
+        <sprouts.security.credential.consumer.version>0.0.7</sprouts.security.credential.consumer.version>
+        <sprouts.security.credential.provider.version>0.0.7</sprouts.security.credential.provider.version>
         <!-- plugin -->
         <apt.maven.plugin.version>1.1.3</apt.maven.plugin.version>
-        <build.helper.maven.plugin.version>3.3.0</build.helper.maven.plugin.version>
-        <versions.maven.plugin.version>2.10.0</versions.maven.plugin.version>
     </properties>
     <repositories>
         <!-- personal-repository -->
@@ -129,7 +127,6 @@
             <artifactId>logbook-spring-boot-starter</artifactId>
             <version>${logbook.version}</version>
         </dependency>
-
         <!-- h2 -->
         <dependency>
             <groupId>com.h2database</groupId>
@@ -142,7 +139,6 @@
             <artifactId>mssql-jdbc</artifactId>
             <scope>runtime</scope>
         </dependency>
-
         <!-- logstash appender -->
         <dependency>
             <groupId>kr.sprouts.framework.autoconfigure</groupId>
@@ -167,14 +163,12 @@
             <artifactId>sprouts-security-credential-consumer-spring-boot-starter</artifactId>
             <version>${sprouts.security.credential.consumer.version}</version>
         </dependency>
-
         <!-- lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-
         <!-- test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -188,104 +182,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>com.mysema.maven</groupId>
-                <artifactId>apt-maven-plugin</artifactId>
-                <version>${apt.maven.plugin.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>target/generated-sources/java</outputDirectory>
-                            <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>${build.helper.maven.plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>parse-version</id>
-                        <goals>
-                            <goal>parse-version</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>versions-maven-plugin</artifactId>
-                <version>${versions.maven.plugin.version}</version>
-            </plugin>
         </plugins>
     </build>
-    <profiles>
-        <profile>
-            <id>snapshot-patch</id>
-            <activation>
-                <property>
-                    <name>snapshotPatch</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>versions-maven-plugin</artifactId>
-                        <version>${versions.maven.plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>set</goal>
-                                </goals>
-                                <phase>validate</phase>
-                                <configuration>
-                                    <newVersion>
-                                        <!--suppress UnresolvedMavenProperty -->
-                                        ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.nextIncrementalVersion}-SNAPSHOT
-                                    </newVersion>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>release-patch</id>
-            <activation>
-                <property>
-                    <name>releasePatch</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>versions-maven-plugin</artifactId>
-                        <version>${versions.maven.plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>set</goal>
-                                </goals>
-                                <phase>validate</phase>
-                                <configuration>
-                                    <newVersion>
-                                        <!--suppress UnresolvedMavenProperty -->
-                                        ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}
-                                    </newVersion>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>
