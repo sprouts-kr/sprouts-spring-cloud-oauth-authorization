@@ -13,6 +13,7 @@
   <name>sprouts-spring-cloud-oauth-authorization</name>
   <properties>
     <java.version>17</java.version>
+    <spring-cloud.version>2022.0.4</spring-cloud.version>
     <!-- dependency -->
     <resilience4j.version>1.7.0</resilience4j.version>
     <querydsl.version>5.0.0</querydsl.version>
@@ -36,7 +37,7 @@
       <dependency>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-dependencies</artifactId>
-        <version>2021.0.8</version>
+        <version>${spring-cloud.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
