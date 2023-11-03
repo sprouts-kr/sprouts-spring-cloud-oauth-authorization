@@ -136,8 +136,8 @@ public class AuthorizeService {
 
             for (UUID targetConsumerId : credential.getConsumerIds()) {
                 credentialConsumerManager.getConsumer(targetConsumerId).ifPresent(credentialConsumer -> {
-                    if (credentialConsumer instanceof BearerTokenCredentialConsumer) {
-                        credentialConsumerAtomicReference.set((BearerTokenCredentialConsumer) credentialConsumer);
+                    if (credentialConsumer instanceof BearerTokenCredentialConsumer bearerTokenCredentialConsumer) {
+                        credentialConsumerAtomicReference.set(bearerTokenCredentialConsumer);
                     }
                 });
 

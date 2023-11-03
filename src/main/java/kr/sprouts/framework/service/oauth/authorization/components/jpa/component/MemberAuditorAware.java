@@ -22,8 +22,8 @@ public class MemberAuditorAware implements AuditorAware<UUID> {
         AtomicReference<String> username = new AtomicReference<>();
 
         optionalAuthentication.ifPresent(authentication -> {
-            if (authentication.isAuthenticated() && authentication.getPrincipal() instanceof User) {
-                username.set(((User) authentication.getPrincipal()).getUsername());
+            if (authentication.isAuthenticated() && authentication.getPrincipal() instanceof User user) {
+                username.set(user.getUsername());
             }
         });
 

@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.7.17</version>
+    <version>3.1.5</version>
     <relativePath/>
   </parent>
   <groupId>kr.sprouts.framework.service</groupId>
@@ -12,15 +12,16 @@
   <version>0.1.0-SNAPSHOT</version>
   <name>sprouts-spring-cloud-oauth-authorization</name>
   <properties>
-    <java.version>11</java.version>
+    <java.version>17</java.version>
+    <spring-cloud.version>2022.0.4</spring-cloud.version>
     <!-- dependency -->
-    <resilience4j.version>1.7.0</resilience4j.version>
+    <resilience4j.version>2.1.0</resilience4j.version>
     <querydsl.version>5.0.0</querydsl.version>
-    <logbook.version>2.16.0</logbook.version>
-    <sprouts.logstash.appender.version>0.0.8</sprouts.logstash.appender.version>
-    <sprouts.web.response.version>0.0.7</sprouts.web.response.version>
-    <sprouts.security.credential.consumer.version>0.0.7</sprouts.security.credential.consumer.version>
-    <sprouts.security.credential.provider.version>0.0.7</sprouts.security.credential.provider.version>
+    <logbook.version>3.5.0</logbook.version>
+    <sprouts.logstash.appender.version>0.1.0-SNAPSHOT</sprouts.logstash.appender.version>
+    <sprouts.web.response.version>0.1.0-SNAPSHOT</sprouts.web.response.version>
+    <sprouts.security.credential.consumer.version>0.1.0-SNAPSHOT</sprouts.security.credential.consumer.version>
+    <sprouts.security.credential.provider.version>0.1.0-SNAPSHOT</sprouts.security.credential.provider.version>
     <!-- plugin -->
     <apt.maven.plugin.version>1.1.3</apt.maven.plugin.version>
   </properties>
@@ -36,7 +37,7 @@
       <dependency>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-dependencies</artifactId>
-        <version>2021.0.8</version>
+        <version>${spring-cloud.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -71,17 +72,17 @@
     <!-- resilience4j -->
     <dependency>
       <groupId>io.github.resilience4j</groupId>
-      <artifactId>resilience4j-spring-boot2</artifactId>
+      <artifactId>resilience4j-spring-boot3</artifactId>
       <version>${resilience4j.version}</version>
     </dependency>
     <dependency>
       <groupId>io.github.resilience4j</groupId>
-      <artifactId>resilience4j-circuitbreaker</artifactId>
+      <artifactId>resilience4j-all</artifactId>
       <version>${resilience4j.version}</version>
     </dependency>
     <dependency>
       <groupId>io.github.resilience4j</groupId>
-      <artifactId>resilience4j-retry</artifactId>
+      <artifactId>resilience4j-reactor</artifactId>
       <version>${resilience4j.version}</version>
     </dependency>
     <!-- prometheus -->
@@ -89,14 +90,15 @@
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-registry-prometheus</artifactId>
     </dependency>
-    <!-- sleuth/zipkin -->
+    <!-- tracing -->
     <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-sleuth</artifactId>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-tracing-bridge-brave</artifactId>
     </dependency>
+    <!-- zipkin -->
     <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-sleuth-zipkin</artifactId>
+      <groupId>io.zipkin.reporter2</groupId>
+      <artifactId>zipkin-reporter-brave</artifactId>
     </dependency>
     <!-- jpa -->
     <dependency>
@@ -113,11 +115,17 @@
       <groupId>com.querydsl</groupId>
       <artifactId>querydsl-apt</artifactId>
       <version>${querydsl.version}</version>
-      <scope>provided</scope>
+      <classifier>jakarta</classifier>
     </dependency>
     <dependency>
       <groupId>com.querydsl</groupId>
       <artifactId>querydsl-jpa</artifactId>
+      <version>${querydsl.version}</version>
+      <classifier>jakarta</classifier>
+    </dependency>
+    <dependency>
+      <groupId>com.querydsl</groupId>
+      <artifactId>querydsl-core</artifactId>
       <version>${querydsl.version}</version>
     </dependency>
     <!-- logbook -->

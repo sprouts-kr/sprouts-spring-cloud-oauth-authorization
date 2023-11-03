@@ -1,7 +1,7 @@
 variables:
   DOCKER_IMAGE: docker:20.10.18
   DOCKER_IN_DOCKER_IMAGE: docker:20.10.18-dind
-  MAVEN_IMAGE: maven:3.9.5-eclipse-temurin-11
+  MAVEN_IMAGE: maven:3.9.5-eclipse-temurin-17
 
 include:
   - project: "library/gitlab-ci"

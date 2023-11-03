@@ -13,11 +13,6 @@ spring:
   output:
     ansi:
       enabled: always
-  sleuth:
-    sampler:
-      probability: 1.0
-  zipkin:
-    base-url: http://zipkin.framework.local/
   cloud:
     discovery:
       enabled: false
@@ -79,6 +74,15 @@ management:
   info:
     java:
       enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+    propagation:
+      consume: B3
+      produce: B3_MULTI
+  zipkin:
+    tracing:
+      endpoint: "http://zipkin.framework.local/api/v2/spans"
 
 resilience4j:
   retry:
@@ -124,10 +128,13 @@ logbook:
   write:
     chunk-size: 4000
 
-logging.level:
-  root: WARN
-  org.zalando.logbook: TRACE
-  kr.sprouts: DEBUG
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+  level:
+    root: WARN
+    org.zalando.logbook: TRACE
+    kr.sprouts: DEBUG
 
 sprouts:
   application:
