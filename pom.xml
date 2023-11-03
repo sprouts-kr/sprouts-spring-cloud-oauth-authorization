@@ -17,7 +17,7 @@
     <!-- dependency -->
     <resilience4j.version>2.1.0</resilience4j.version>
     <querydsl.version>5.0.0</querydsl.version>
-    <logbook.version>2.16.0</logbook.version>
+    <logbook.version>3.5.0</logbook.version>
     <sprouts.logstash.appender.version>0.1.0-SNAPSHOT</sprouts.logstash.appender.version>
     <sprouts.web.response.version>0.1.0-SNAPSHOT</sprouts.web.response.version>
     <sprouts.security.credential.consumer.version>0.1.0-SNAPSHOT</sprouts.security.credential.consumer.version>
