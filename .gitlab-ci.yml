@@ -1,0 +1,27 @@
+variables:
+  DOCKER_IMAGE: docker:20.10.18
+  DOCKER_IN_DOCKER_IMAGE: docker:20.10.18-dind
+  MAVEN_IMAGE: maven:3.9.5-eclipse-temurin-11
+
+include:
+  - project: "library/gitlab-ci"
+    ref: 0.1.0
+    file:
+      - 'maven-service-with-version/common/prepare.gitlab-ci.yml'
+      - 'maven-service-with-version/common/maven.compile.gitlab-ci.yml'
+      - 'maven-service-with-version/common/maven.test.gitlab-ci.yml'
+      - 'maven-service-with-version/common/maven.package.gitlab-ci.yml'
+      - 'maven-service-with-version/common/quality.gitlab-ci.yml'
+      - 'maven-service-with-version/common/docker.build.gitlab-ci.yml'
+      - 'maven-service-with-version/common/docker.push.gitlab-ci.yml'
+      - 'maven-service-with-version/common/finish.gitlab-ci.yml'
+
+stages:
+  - prepare
+  - maven-compile
+  - maven-test
+  - maven-package
+  - quality
+  - docker-build
+  - docker-push
+  - finish
