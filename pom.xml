@@ -10,7 +10,7 @@
     </parent>
     <groupId>kr.sprouts.framework.service</groupId>
     <artifactId>sprouts-spring-cloud-oauth-authorization</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>sprouts-spring-cloud-oauth-authorization</name>
     <properties>
         <java.version>11</java.version>
