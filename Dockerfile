@@ -1,4 +1,4 @@
-FROM registry.nexus.devops.local/eclipse-temurin:11-jdk-alpine
+FROM registry.nexus.devops.local/eclipse-temurin:17-jdk-alpine
 
 LABEL authors="jwseo@live.co.kr"
 

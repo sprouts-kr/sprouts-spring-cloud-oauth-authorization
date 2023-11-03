@@ -12,7 +12,7 @@
   <version>0.1.0-SNAPSHOT</version>
   <name>sprouts-spring-cloud-oauth-authorization</name>
   <properties>
-    <java.version>11</java.version>
+    <java.version>17</java.version>
     <!-- dependency -->
     <resilience4j.version>1.7.0</resilience4j.version>
     <querydsl.version>5.0.0</querydsl.version>
